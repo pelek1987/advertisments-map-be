@@ -1,0 +1,16 @@
+{
+  "compilerOptions": {
+    "target": "ES6",
+    "sourceMap": true,
+    "outDir": "dist",
+    "module": "CommonJS",
+    "noImplicitAny": true,
+    "preserveConstEnums": true,
+    "lib": ["es6"],
+    "downlevelIteration": true,
+    "moduleResolution": "Node",
+    "esModuleInterop": true,
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true
+  }
+}
