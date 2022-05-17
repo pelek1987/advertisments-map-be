@@ -1,5 +1,10 @@
 import {AdEntity, NewAdEntity} from "../types";
 import {ValidationError} from "../utlils/errors";
+import { v4 as uuid } from 'uuid';
+import {pool} from "../db";
+import {FieldPacket} from "mysql2";
+
+type AdRecordResults = [AdEntity[], FieldPacket[]];
 
 export class AdRecord implements AdEntity {
     public id: string;
@@ -7,13 +12,11 @@ export class AdRecord implements AdEntity {
     public description: string;
     public price: number;
     public url: string;
-    public coords: {
-        lat: number;
-        lon: number;
-    };
+    public lat: number;
+    public lon: number;
 
     constructor(obj: NewAdEntity) {
-        const {name, description, price, url, coords: {lat, lon}} = obj;
+        const {id, name, description, price, url, lat, lon} = obj;
 
         if (!name || name.length > 100) {
             throw new ValidationError('Nazwa ogłoszenia nie może być pusta lub przekraczać 100 znaków.');
@@ -35,14 +38,22 @@ export class AdRecord implements AdEntity {
         if (!isCoordsValid) {
             throw new ValidationError('Nie można zlokalizować ogłoszenia')
         }
+
+        this.id = id ?? uuid();
         this.name = name;
         this.description = description;
         this.price = price;
         this.url = url;
-        this.coords = {
-            lat,
-            lon
-        }
+        this.lat = lat;
+        this.lon = lon;
+    }
+
+    static async getOne(id: string): Promise<AdRecord> {
+        const [results] = await pool.execute('SELECT * FROM `ads` WHERE `id` = :id', {
+            id,
+        }) as AdRecordResults;
+
+        return results.length === 0 ? null : new AdRecord(results[0]);
     }
 
 

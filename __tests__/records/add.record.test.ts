@@ -6,10 +6,8 @@ const data: NewAdEntity = {
     description: 'Blah blah',
     price: 1000,
     url: 'https//expampe.com',
-    coords: {
-        lat: 50.2656066,
-        lon: 18.9917111
-    }
+    lat: 50.2656066,
+    lon: 18.9917111
 }
 
 let ar: AdRecord;
@@ -98,4 +96,25 @@ describe('AdRecord class', () => {
             });
         });
     });
+
+    describe('has method getOne that',() => {
+        let ad: AdRecord;
+
+        it('will return null when given id does not exist', async () => {
+            ad = await AdRecord.getOne('wrong-id');
+            expect(ad).toBeNull();
+        })
+        it('will return AdRecord when given id exists', async () => {
+                ad = await AdRecord.getOne('xyz');
+                expect(ad).toBeDefined();
+                expect(ad).toMatchObject({
+                    name: 'Testowa nazwa',
+                    description: 'Testowy opis',
+                    price: 0,
+                    url: 'http://example.com',
+                    lat: 50.2656066,
+                    lon: 18.9917111
+                })
+        })
+    })
 });

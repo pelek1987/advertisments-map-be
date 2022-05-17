@@ -4,10 +4,8 @@ export interface AdEntity {
     description: string;
     price: number;
     url: string;
-    coords : {
-        lat: number;
-        lon: number;
-    };
+    lat: number;
+    lon: number;
 }
 
 export interface NewAdEntity extends Omit<AdEntity, 'id'>{
