@@ -70,5 +70,9 @@ export class AdRecord implements AdEntity {
             })
         });
     }
+    async insert(): Promise<string> {
+        await pool.execute('INSERT INTO `ads` (`id`, `name`, `description`, `price`, `url`, `lat`, `lon`) VALUES(:id, :name, :description, :price, :url, :lat, :lon)', this)
+        return this.id;
+    }
 
 }

@@ -101,17 +101,16 @@ describe('AdRecord class', () => {
             });
         });
     });
-    let ad: AdRecord;
     describe('has method getOne that',() => {
 
         it('will return null when given id does not exist', async () => {
-            ad = await AdRecord.getOne('wrong-id');
-            expect(ad).toBeNull();
+            ar = await AdRecord.getOne('wrong-id');
+            expect(ar).toBeNull();
         })
         it('will return AdRecord when given id exists', async () => {
-                ad = await AdRecord.getOne('xyz');
-                expect(ad).toBeDefined();
-                expect(ad).toMatchObject({
+                ar = await AdRecord.getOne('xyz');
+                expect(ar).toBeDefined();
+                expect(ar).toMatchObject({
                     name: 'Testowa nazwa',
                     description: 'Testowy opis',
                     price: 0,
@@ -143,5 +142,28 @@ describe('AdRecord class', () => {
             ads = await AdRecord.find('wrong-name')
             expect(ads).toEqual([]);
         })
+    })
+    describe('has method insert that',() => {
+        let id: string;
+        beforeEach(async () => {
+            ar = new AdRecord(data);
+        })
+        afterEach(async () => {
+            await pool.execute('DELETE FROM `ads` WHERE `id` = :id', {
+                id,
+            })
+        })
+        it('returns new uuid', async () => {
+            id = await ar.insert();
+            expect(id).toBeDefined();
+            expect(typeof id).toBe('string');
+            expect(id.length).toBe(36);
+        });
+        it('inserts data to database', async () => {
+            id = await ar.insert();
+            const foundAd = await AdRecord.getOne(id);
+            expect(foundAd).toBeDefined();
+            expect(foundAd.id).toBe(id);
+        });
     })
 });
