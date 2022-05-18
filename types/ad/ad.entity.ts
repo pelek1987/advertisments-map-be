@@ -8,6 +8,8 @@ export interface AdEntity {
     lon: number;
 }
 
-export interface NewAdEntity extends Omit<AdEntity, 'id'>{
+export interface SimpleAdEntity extends Pick<AdEntity, 'id' | 'lat' | 'lon'> {}
+
+export interface NewAdEntity extends Omit<AdEntity, 'id'> {
     id?: string
 }

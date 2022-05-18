@@ -1,5 +1,6 @@
 import {AdRecord} from "../../records/ad.record";
-import {NewAdEntity} from "../../types";
+import {NewAdEntity, SimpleAdEntity} from "../../types";
+import {pool} from "../../db";
 
 const data: NewAdEntity = {
     name: 'Test name',
@@ -13,6 +14,10 @@ const data: NewAdEntity = {
 let ar: AdRecord;
 
 describe('AdRecord class', () => {
+
+    afterAll(async () => {
+        await pool.end()
+    })
 
     it('should create proper AdRecord instance', () => {
         ar = new AdRecord(data);
@@ -96,9 +101,8 @@ describe('AdRecord class', () => {
             });
         });
     });
-
+    let ad: AdRecord;
     describe('has method getOne that',() => {
-        let ad: AdRecord;
 
         it('will return null when given id does not exist', async () => {
             ad = await AdRecord.getOne('wrong-id');
@@ -115,6 +119,29 @@ describe('AdRecord class', () => {
                     lat: 50.2656066,
                     lon: 18.9917111
                 })
+        })
+    })
+    let ads: SimpleAdEntity[];
+    describe('has method find that',() => {
+        it('will list array of found entries', async () => {
+            ads = await AdRecord.find('');
+            expect(ads.length).toBeGreaterThan(0);
+        })
+
+        it('will list array of small amount of data', () => {
+            expect(ads[0]).not.toHaveProperty('description');
+            expect(ads[0]).not.toHaveProperty('price');
+            expect(ads[0]).not.toHaveProperty('url');
+        })
+
+        it('will list array of found AdRecords when searching for "testowa"', async () => {
+            ads = await AdRecord.find('a')
+            expect(ads[0].id).toBe('xyz');
+        })
+
+        it('will list array of found AdRecords when searching for "wrong-name"', async () => {
+            ads = await AdRecord.find('wrong-name')
+            expect(ads).toEqual([]);
         })
     })
 });
