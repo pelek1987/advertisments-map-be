@@ -1,12 +1,13 @@
-import 'dotenv/config';
+// import 'dotenv/config';
 import { createPool } from 'mysql2/promise';
+import {config} from "../config/config";
 
 export const pool = createPool({
-    host: 'localhost',
+    host: config.dbHostname,
     port: 3306,
-    database: process.env.DB_NAME,
-    user: process.env.DB_USER,
-    password: '',
+    database: config.dbName,
+    user: config.dbUser,
+    password: config.dbPassword,
     decimalNumbers: true,
     namedPlaceholders: true,
 })
